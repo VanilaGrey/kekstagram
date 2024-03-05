@@ -1,5 +1,2 @@
-function truncate(str, maxlength) {
-  return (str.length <= maxlength) ? true : false
-}
-
-truncate("Проверка", 140)
+import { createsimilarPhotos } from './offer-card.js';
+createsimilarPhotos();
