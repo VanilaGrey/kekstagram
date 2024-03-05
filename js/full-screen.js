@@ -27,7 +27,7 @@ export const openBigPhoto = (photo) => {
   bigPicture.querySelector(".social__comments").innerHTML = photo.comment.map(
     (comment) => `
   <img src="${comment.avatar}" alt="">
-  <p>${comment.description}</p>
+  <p class="social__text">${comment.message}</p>
 `
   );
   bigPicture.querySelector(".social__caption").textContent = photo.description;

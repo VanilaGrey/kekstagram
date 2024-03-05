@@ -1,4 +1,4 @@
-import { MESSAGE } from './const.js';
+import { MESSAGES } from './const.js';
 
 // Функция checkStringLength для проверки максимальной длины строки:
 function checkStringLength(string, length) {
@@ -43,8 +43,8 @@ const generateRandomMessage = () => {
   // Случайным образом выбираем предложения из массива MESSAGE
   const selectedSentences = [];
   for (let i = 0; i < numberOfSentences; i++) {
-    const randomIndex = Math.floor(Math.random() * MESSAGE.length);
-    selectedSentences.push(MESSAGE[randomIndex]);
+    const randomIndex = Math.floor(Math.random() * MESSAGES.length);
+    selectedSentences.push(MESSAGES[randomIndex]);
   }
 
   // Объединяем выбранные предложения в одну строку

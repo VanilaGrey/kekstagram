@@ -1,5 +1,5 @@
 const COARD_AMOUNT = 25;
-const DESCRIPTION = [
+const DESCRIPTIONS = [
   "Моя первая фотография. Ура!",
   "Ну как-то так",
   "Салам-пополам, а вот и я",
@@ -26,7 +26,7 @@ const NAMES = [
   'Александр'
 ] ;
 
-const MESSAGE = [
+const MESSAGES = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -36,4 +36,4 @@ const MESSAGE = [
 ]
 
 
-export {COARD_AMOUNT, DESCRIPTION, MESSAGE, NAMES}
+export {COARD_AMOUNT, DESCRIPTIONS, MESSAGES, NAMES}
