@@ -8,15 +8,16 @@ const pictureTemplate = document
 const similarPhotos = createPhotos();
 
 const createsimilarPhotos = () => {
-  similarPhotos.forEach(({ likes, url, comment, description }) => {
+  similarPhotos.forEach(({ likes, url, comments, description, autor }) => {
     const pictureElement = pictureTemplate.cloneNode(true);
     pictureElement.querySelector(".picture__img").src = url;
+    console.log("da");
     pictureElement.querySelector(".picture__likes").textContent = likes;
-    pictureElement.querySelector(".picture__comments").textContent = comment.length;
+    pictureElement.querySelector(".picture__comments").textContent = comments.length;
     pictureElement
       .querySelector(".picture__img")
       .addEventListener("click", () =>
-        openBigPhoto({ likes, url, comment, description })
+        openBigPhoto({ likes, url, comments, description, autor})
       );
     picturesContainer.append(pictureElement);
   });

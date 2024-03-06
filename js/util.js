@@ -48,7 +48,7 @@ const generateRandomMessage = () => {
   }
 
   // Объединяем выбранные предложения в одну строку
-  const commentText = selectedSentences.join(" ");
+  const commentText = selectedSentences.join("<br>");
 
   return commentText;
 };

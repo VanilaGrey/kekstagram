@@ -8,6 +8,10 @@ const DESCRIPTIONS = [
   "Этот вид прекрасен!"
 ];
 
+const COMMENTS_LIMIT = 35;
+const LIKES_LIMIT = 200;
+const PHOTOS_LIMIT = 25;
+
 const NAMES = [
   'Артем',
   'Денис',
@@ -36,4 +40,4 @@ const MESSAGES = [
 ]
 
 
-export {COARD_AMOUNT, DESCRIPTIONS, MESSAGES, NAMES}
+export {COARD_AMOUNT, DESCRIPTIONS, MESSAGES, NAMES, COMMENTS_LIMIT, LIKES_LIMIT, PHOTOS_LIMIT}
