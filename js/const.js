@@ -39,5 +39,14 @@ const MESSAGES = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ]
 
+const EFFECTS = [
+  { name: 'Хром', property: 'grayscale', min: 0, max: 1, step: 0.1 },
+  { name: 'Сепия', property: 'sepia', min: 0, max: 1, step: 0.1 },
+  { name: 'Марвин', property: 'invert', min: 0, max: 100, step: 1 },
+  { name: 'Фобос', property: 'blur', min: 0, max: 3, step: 0.1 },
+  { name: 'Зной', property: 'brightness', min: 1, max: 3, step: 0.1 },
+  { name: 'Оригинал', property: 'none' }
+];
 
-export {COARD_AMOUNT, DESCRIPTIONS, MESSAGES, NAMES, COMMENTS_LIMIT, LIKES_LIMIT, PHOTOS_LIMIT}
+
+export {COARD_AMOUNT, DESCRIPTIONS, MESSAGES, NAMES, COMMENTS_LIMIT, LIKES_LIMIT, PHOTOS_LIMIT, EFFECTS}

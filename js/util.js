@@ -58,11 +58,17 @@ function openBigPicture() {
   const bigPicture = document.querySelector('.big-picture');
   const commentCount = bigPicture.querySelector('.social__comment-count');
   const commentLoader = bigPicture.querySelector('.comments-loader');
+  const closeBigPhoto = bigPicture.querySelector('.big-picture__cancel');
+
   commentLoader.classList.add('hidden');
   commentCount.classList.add('hidden');
   bigPicture.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  document.addEventListener('keydown', onEscPress); // Добавляем обработчик события
+  document.addEventListener('keydown', onBigPictureEscPKeydown); // Добавляем обработчик события
+
+  closeBigPhoto.addEventListener('click', () => {
+    closeBigPicture();
+  });
 }
 
 // функция выхода из полноэкранного режима
@@ -70,18 +76,18 @@ function closeBigPicture() {
   const bigPicture = document.querySelector('.big-picture');
   const commentCount = bigPicture.querySelector('.social__comment-count');
   const commentLoader = bigPicture.querySelector('.comments-loader');
-  const closeBigPhoto = bigPicture.querySelector('.big-picture__cancel');
-  closeBigPhoto.addEventListener('click', closeBigPicture);
+
   commentLoader.classList.remove('hidden');
   commentCount.classList.remove('hidden');
   bigPicture.classList.add('hidden');
   document.body.classList.remove('modal-open');
-  document.removeEventListener('keydown', onEscPress); // Удаляем обработчик события
+  document.removeEventListener('keydown', onBigPictureEscPKeydown); // Удаляем обработчик события
 }
 
 // Обработчик события для закрытия окна по нажатию на клавишу Esc
-function onEscPress(evt) {
+function onBigPictureEscPKeydown(evt) {
   if (evt.key === 'Escape') {
+    evt.preventDefault();
     closeBigPicture();
   }
 }
@@ -93,5 +99,4 @@ export {
   generateRandomMessage,
   openBigPicture,
   closeBigPicture,
-  onEscPress,
 };

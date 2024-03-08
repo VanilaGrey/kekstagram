@@ -6,7 +6,6 @@ import {
 } from "./util.js";
 
 import {
-  COARD_AMOUNT,
   DESCRIPTIONS,
   MESSAGES,
   NAMES,
@@ -19,7 +18,7 @@ const createComment = () => ({
   id: getRandomPositiveInteger(1, 25),
   avatar: `img/avatar-${getRandomPositiveInteger(1, 6)}.svg`,
   message: generateRandomMessage(MESSAGES),
-  name: getRandomElement(NAMES),
+  autor: getRandomElement(NAMES),
 });
 
 const createPhotos = () =>
@@ -30,7 +29,7 @@ const createPhotos = () =>
     (_item, id) => ({
       id,
       url: `photos/${id + 1}.jpg`,
-      description: generateRandomMessage(DESCRIPTIONS),
+      description: getRandomElement(DESCRIPTIONS),
       likes: getRandomPositiveInteger(0, LIKES_LIMIT),
       comments: Array.from(
         {
