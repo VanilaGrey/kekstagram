@@ -18,79 +18,62 @@
 // На расширенном тарифе регулировку интенсивности эффекта можно не делать, достаточно применить к изображению только эффект. Слайдер при этом нужно скрыть,
 // библиотеку noUiSlider подключать к странице не нужно.
 
-// 2.4. Комментарий:
-// комментарий не обязателен;
-// длина комментария не может составлять больше 140 символов;
-// если фокус находится в поле ввода комментария, нажатие на Esc не должно приводить к закрытию формы редактирования изображения.
-// На расширенном тарифе часть про фокус можно не делать.
 import { openBigPicture, closeBigPicture } from "./util.js";
-import { EFFECTS } from './const.js'
+import { EFFECTS } from "./const.js";
+import { checkStringLength } from "./util.js";
 
 const formElement = document.querySelector(".img-upload__form");
 const uploadElement = formElement.querySelector("#upload-file");
 const overlayElement = formElement.querySelector(".img-upload__overlay");
-const controlSmallerElement = formElement.querySelector(".scale__control--smaller");
-const controlBiggerElement = formElement.querySelector( ".scale__control--bigger");
+const controlSmallerElement = formElement.querySelector(
+  ".scale__control--smaller"
+);
+const controlBiggerElement = formElement.querySelector(
+  ".scale__control--bigger"
+);
 const controlValueElement = formElement.querySelector("[name=scale]");
 const cancelElement = formElement.querySelector("#upload-cancel");
 const previewElement = formElement.querySelector(".img-upload__preview img");
 const effectsElement = formElement.querySelector(".img-upload__effects");
 const radioElement = formElement.querySelector('[name="effect]');
-const hashtagsElement = formElement.querySelector('.text__hashtags');
+const hashtagsElement = formElement.querySelector(".text__hashtags");
+const submitElement = formElement.querySelector(".img-upload__submit");
+const descriptionElement = formElement.querySelector(".text__description");
 
 let scaleValue = 100;
 const STEP_CONTROL = 25;
-const MAX_HASHTAGS = 5;
-const FIELDS = ['input', 'textarea'];
+const MAX_HASHTAGS = 5; //колличество хэштегов
+const MAX_HASHTAG_SIZE = 20; // макс длина хэштега
+
+const FIELDS = ["input", "textarea"];
+const RE = /^#[A-Za-zА-Яа-яЁё0-9]{1-19}$/i; //выражение хэштега
 
 const pristine = new Pristine(formElement, {
-  classTo: 'img-upload__form__element',
-  errorTextParent: 'img-upload__form__element'
+  classTo: "text",
+  errorTextParent: "text",
 });
 
-const re = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/i;
+// открытие формы
 
-
-const validateHashtags = () => {
-  const hashtags = hashtagsElement.value.split(' ');
-  const hasInvalid = !hashtags.every((tag) => re.test(tag));
-  const isLimit = hashtags.length < MAX_HASHTAGS;
-  if (isLimit || hasInvalid) {
-    errorTextParent = "Максимальное количество хэш-тегов не должно превышать 5."
-  }
-}
-  pristine.addValidator(hashtagsElement, validateHashtags)
-
-hashtagsElement.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') {
-    event.stopPropagation(); // Предотвращает дальнейшее распространение события
-  }
+uploadElement.addEventListener("change", () => {
+  let [file] = uploadElement.files; // Получаем выбранный файл
+  previewElement.src = URL.createObjectURL(file);
+  overlayElement.classList.remove("hidden");
+  document.body.classList.add("modal-open");
+  document.addEventListener("keydown", onUserModalEscKeydown);
 });
 
-
-const updateImageScale = () => {
-  const scale = scaleValue / 100;
-  previewElement.style.transform = `scale(${scale})`;
-};
-
-  function openForm() {
-  uploadElement.addEventListener("change", () => {
-    let [file] = uploadElement.files; // Получаем выбранный файл
-    previewElement.src = URL.createObjectURL(file);
-    overlayElement.classList.remove("hidden");
-    document.body.classList.add("modal-open");
-    document.addEventListener("keydown", onUserModalEscKeydown);
-  })
-}
+// закрытие формы
 
 function closeForm() {
   cancelElement.addEventListener("click", () => {
     overlayElement.classList.add("hidden");
     document.body.classList.remove("modal-open");
     document.removeEventListener("keydown", onUserModalEscKeydown);
-  })
+  });
 }
 
+// закрытие на клавишу esc
 function onUserModalEscKeydown(evt) {
   const tagName = document.activeElement.tagName.toLowerCase();
   if (FIELDS.includes(tagName)) {
@@ -102,22 +85,119 @@ function onUserModalEscKeydown(evt) {
     closeForm();
   }
 }
+
 cancelElement.addEventListener("click", () => {
   closeForm();
 });
 
-  controlSmallerElement.addEventListener("click", () => {
-    scaleValue = Math.max(scaleValue - STEP_CONTROL, 25);
-    controlValueElement.value = `${scaleValue}%`;
-    updateImageScale();
-  });
+// изменение размера загружаемой картинки
+const updateImageScale = () => {
+  const scale = scaleValue / 100;
+  previewElement.style.transform = `scale(${scale})`;
+};
 
-  controlBiggerElement.addEventListener("click", () => {
-    scaleValue = Math.min(scaleValue + STEP_CONTROL, 100);
-    controlValueElement.value = `${scaleValue}%`;
-    updateImageScale();
-  });
+controlSmallerElement.addEventListener("click", () => {
+  scaleValue = Math.max(scaleValue - STEP_CONTROL, 25);
+  controlValueElement.value = `${scaleValue}%`;
+  updateImageScale();
+});
 
+controlBiggerElement.addEventListener("click", () => {
+  scaleValue = Math.min(scaleValue + STEP_CONTROL, 100);
+  controlValueElement.value = `${scaleValue}%`;
+  updateImageScale();
+});
 
+// валидация максимального кол-ва тегов
+const validateHashtagsCount = (value) => {
+  const hashtags = value.split(" ");
+  return hashtags.length <= MAX_HASHTAGS;
+};
 
-export { openForm };
+pristine.addValidator(
+  hashtagsElement,
+  validateHashtagsCount,
+  "Максимальное количество хэш-тегов не должно превышать 5.",
+  1003,
+  true
+);
+
+// валидация начала тега
+const validateHashtagsHashable = (value) => {
+  const hashtags = value.split(" ");
+  return hashtags.every((tag) => tag.startsWith("#"));
+};
+
+pristine.addValidator(
+  hashtagsElement,
+  validateHashtagsHashable,
+  "Хэштег начинается с #.",
+  1002,
+  true
+);
+
+// валидация формата тега
+const validateHashtagsFormat = (value) => {
+  const hashtags = value.split(" ");
+  return hashtags.every((tag) => RE.test(tag));
+};
+
+pristine.addValidator(
+  hashtagsElement,
+  validateHashtagsFormat,
+  "Хэштег состоит из букв или цифр.",
+  1000,
+  true
+);
+
+// валидация максимального кол-ва символов в теге
+const validateHashtagsSizes = (value) => {
+  const hashtags = value.split(" ");
+  return hashtags.every((tag) => tag.length <= MAX_HASHTAG_SIZE);
+};
+
+pristine.addValidator(
+  hashtagsElement,
+  validateHashtagsSizes,
+  "Длина хэштега не более 20 символов.",
+  1001
+);
+
+const validateHashtagsUnique = (value) => {
+  const hashtags = value.split(" ");
+  const uniqueHashtags = new Set(hashtags);
+
+  if (hashtags.length !== uniqueHashtags.size) {
+    return false;
+  }
+
+  return true;
+};
+
+pristine.addValidator(
+  hashtagsElement,
+  validateHashtagsUnique,
+  "Хэштеги должны быть уникальными",
+  1004
+);
+
+const validateDescription = () => {
+  return checkStringLength(descriptionElement.value, 140);
+};
+
+pristine.addValidator(
+  descriptionElement,
+  validateDescription,
+  "Максимальная длина комментария 140 символов",
+  1007
+);
+
+submitElement.addEventListener("click", (evt) => {
+  evt.preventDefault();
+
+  const isValid = pristine.validate();
+  if (!isValid) {
+    return;
+  }
+  submitElement.submit();
+});
