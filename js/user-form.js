@@ -1,6 +1,6 @@
 import { checkStringLength } from "./util.js";
-import { changeEffectPhoto } from './effect.js'
-import { updateImageScale } from './photo-size.js'
+import { initEffects } from "./effect.js";
+import { createsimilarPhotos } from "./offer-card.js";
 
 const formElement = document.querySelector(".img-upload__form");
 const uploadElement = formElement.querySelector("#upload-file");
@@ -13,7 +13,6 @@ const previewElement = formElement.querySelector(".img-upload__preview img");
 const hashtagsElement = formElement.querySelector(".text__hashtags");
 const descriptionElement = formElement.querySelector(".text__description");
 
-
 const MAX_HASHTAGS = 5; //колличество хэштегов
 const MAX_HASHTAG_SIZE = 20; // макс длина хэштега
 const FIELDS = ["input", "textarea"];
@@ -24,6 +23,8 @@ const pristine = new Pristine(formElement, {
   classTo: "img-upload__text",
   errorTextParent: "img-upload__text",
 });
+
+createsimilarPhotos();
 
 // открытие формы
 uploadElement.addEventListener("change", () => {
@@ -60,7 +61,7 @@ cancelElement.addEventListener("click", () => {
   closeForm();
 });
 
-changeEffectPhoto();
+initEffects(formElement);
 
 // валидация максимального кол-ва тегов
 const validateHashtagsCount = (value) => {
@@ -132,36 +133,16 @@ submitElement.addEventListener("click", (evt) => {
   formElement.submit();
 });
 
-const blockSubmitButton = () => {
-  submitElement.setAttribute('disabled', true);
-  submitElement.textContent = 'Отправка...';
-};
-
-const unblockSubmitButton = () => {
-  submitElement.disabled = false;
-  submitElement.textContent = 'Опубликовать';
-};
-
 const setUserFormSubmit = () => {
-  formElement.addEventListener('submit', (evt) => {
+  submitElement.addEventListener("click", (evt) => {
     evt.preventDefault();
+
     const isValid = pristine.validate();
-    if (isValid) {
-      blockSubmitButton();
-      sendData(
-        () => {
-          closeForm();
-          createMessageSuccess();
-          unblockSubmitButton();
-        },
-        () => {
-          createMessageError();
-          unblockSubmitButton();
-        },
-        new FormData(evt.target),
-      );
+    if (!isValid) {
+      return;
     }
+    formElement.submit();
   });
 };
 
-export { setUserFormSubmit }
+export { setUserFormSubmit };
